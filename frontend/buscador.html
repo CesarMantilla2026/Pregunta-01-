@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador de Productos</title>
+    <style>
+        body { background-color: #f4f6f9; font-family: sans-serif; padding-top: 60px; }
+        .caja-buscador { width: 450px; margin: 0 auto; background: white; padding: 25px; border: 1px solid #dcdfe6; border-radius: 8px; }
+        h3 { margin-top: 0; color: #333; text-align: center; }
+        .ejemplos { font-size: 12px; color: #777; text-align: center; margin-bottom: 15px; }
+        .barra-busqueda { display: flex; gap: 8px; margin-bottom: 20px; }
+        input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 15px; background-color: #e01e37; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .tabla-resultado { width: 100%; border-collapse: collapse; margin-bottom: 20px; display: none; background: #f0f4f8; border-radius: 6px; }
+        .tabla-resultado td { padding: 10px; border-bottom: 1px solid #dcdfe6; font-size: 14px; }
+        .tabla-resultado td b { color: #00509d; }
+        .msg-error { color: #cc0000; background: #fdf2f2; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 20px; display: none; font-size: 13px; }
+        .regresar { display: block; text-align: center; color: #00509d; font-size: 14px; text-decoration: none; }
+        .regresar:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="caja-buscador">
+        <h3>Buscador de Inventario</h3>
+        <p class="ejemplos">Probar con: P001, P002, P003</p>
+        
+        <div class="barra-busqueda">
+            <input type="text" id="codigoInput" placeholder="Código de producto">
+            <button onclick="buscar()">Buscar</button>
+        </div>
+
+        <table id="tablaResultado" class="tabla-resultado">
+            <tr>
+                <td><b>Código:</b> <span id="resCodigo"></span></td>
+                <td><b>Nombre:</b> <span id="resNombre"></span></td>
+            </tr>
+            <tr>
+                <td><b>Precio:</b> S/. <span id="resPrecio"></span></td>
+                <td><b>Stock:</b> <span id="resStock"></span> u.</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="font-style: italic; color: #555;"><span id="resDesc"></span></td>
+            </tr>
+        </table>
+
+        <div id="boxError" class="msg-error"></div>
+
+        <a href="principal.html" class="regresar">Regresar al menú principal</a>
+    </div>
+
+    <script>
+        const BACKEND_URL = "http://localhost:5000";
+
+        async function buscar() {
+            const codigo = document.getElementById('codigoInput').value;
+            const tablaResultado = document.getElementById('tablaResultado');
+            const boxError = document.getElementById('boxError');
+            
+            tablaResultado.style.display = 'none';
+            boxError.style.display = 'none';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/buscar_producto`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo: codigo })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('resCodigo').innerText = data.codigo;
+                    document.getElementById('resNombre').innerText = data.nombre;
+                    document.getElementById('resPrecio').innerText = data.precio.toFixed(2);
+                    document.getElementById('resStock').innerText = data.stock;
+                    document.getElementById('resDesc').innerText = "Descripción: " + data.descripcion;
+                    tablaResultado.style.display = 'table';
+                } else {
+                    boxError.innerText = "Producto no encontrado.";
+                    boxError.style.display = 'block';
+                }
+            } catch (err) {
+                boxError.innerText = "Error al conectar con el servidor.";
+                boxError.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

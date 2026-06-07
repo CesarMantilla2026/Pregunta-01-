@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Principal</title>
+    <style>
+        body { background-color: #f4f6f9; font-family: sans-serif; padding-top: 100px; }
+        .menu-caja { width: 400px; margin: 0 auto; background: white; padding: 30px; border: 1px solid #dcdfe6; border-radius: 8px; text-align: center; }
+        h1 { color: #333; font-size: 24px; margin-top: 0; }
+        p { color: #666; }
+        .nombre-resaltado { color: #e01e37; font-weight: bold; }
+        .linea { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        .enlace-boton { display: block; padding: 12px; background-color: #00509d; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; margin-bottom: 12px; }
+        .enlace-boton:hover { background-color: #003f7a; }
+        .boton-salir { width: 100%; padding: 10px; background-color: white; color: #555; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+        .boton-salir:hover { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="menu-caja">
+        <h1>Bienvenido</h1>
+        <p>Usuario conectado: <span id="nombreUsuario" class="nombre-resaltado">...</span></p>
+        <div class="linea"></div>
+        <a href="buscador.html" class="enlace-boton">Ir al Buscador de Productos</a>
+        <button onclick="logout()" class="boton-salir">Cerrar Sesión</button>
+    </div>
+
+    <script>
+        const nombre = localStorage.getItem('usuario_nombre');
+        if (!nombre) {
+            window.location.href = "login.html";
+        } else {
+            document.getElementById('nombreUsuario').innerText = nombre;
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>
